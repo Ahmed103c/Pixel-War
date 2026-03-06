@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using PixelWarApp.Server.DTO;
 using PixelWarApp.Server.Entity;
 using PixelWarApp.Server.Services;
 
@@ -16,17 +17,17 @@ namespace PixelWarApp.Server.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<PixelEntity>>> GetAllPixels()
+        public async Task<List<PixelDto>> GetAllPixels()
         {
             var pixels = await _pixelService.GetAllPixelsAsync();
-            return Ok(pixels);
+            return pixels;
         }
 
-        [HttpPost]
-        public async Task<IActionResult> AddPixel(PixelEntity pixelEntity)
+        [HttpPut]
+        public async Task<IActionResult> PutPixel(PixelDto pixelDto)
         {
-            var pixel = await _pixelService.AddPixelAsync(pixelEntity);
-            return Ok(pixel);
+            await _pixelService.PutPixelAsync(pixelDto);
+            return Ok();
         }
     }
 }

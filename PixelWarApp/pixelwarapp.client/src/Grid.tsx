@@ -1,40 +1,56 @@
 import { useEffect, useState } from "react";
 import "./Grid.css";
-import { getPixels } from "./services/pixelService";
+import { getPixels, savePixel } from "./services/pixelService";
 
 const COLS = 40;
 const ROWS = 20;
 
-
 const PALETTE = ["#ff0000", "#00ff00", "#0000ff", "#ffff00", "#000000", "#ffffff"];
 
 function Grid() {
+  const [pixelColors, setPixelColors] = useState<Record<string, string>>({});
+  const [selectedColor, setSelectedColor] = useState<string>(PALETTE[0]);
 
   useEffect(() => {
     const fetchPixels = async () => {
       try {
-        const pixels = await getPixels()
-        console.log("Pixels from backend:", pixels)
+        const pixels = await getPixels();
+
+        const pixelsMap: Record<string, string> = {};
+        for (const pixel of pixels) {
+          const key = `${pixel.x},${pixel.y}`;
+          pixelsMap[key] = pixel.color;
+        }
+
+        setPixelColors(pixelsMap);
+        console.log("Pixels from backend:", pixels);
       } catch (error) {
-        console.error("Error fetching pixels:", error)
+        console.error("Error fetching pixels:", error);
       }
-    }
+    };
 
-    fetchPixels()
-  }, [])
+    fetchPixels();
+  }, []);
 
-  const [pixelColors, setPixelColors] = useState<Record<string, string>>({});
-  const [selectedColor, setSelectedColor] = useState<string>(PALETTE[0]);
-
-  const changeColor = (x: number, y: number) => {
+  const changeColor = async (x: number, y: number) => {
     const key = `${x},${y}`;
 
-    setPixelColors((prev) => ({
-      ...prev,
-      [key]: selectedColor,
-    }));
+    try {
+      await savePixel({
+        x,
+        y,
+        color: selectedColor,
+      });
 
-    console.log(`color of pixel : {${x},${y}} has changed`);
+      setPixelColors((prev) => ({
+        ...prev,
+        [key]: selectedColor,
+      }));
+
+      console.log(`color of pixel : {${x},${y}} has changed`);
+    } catch (error) {
+      console.error("Error saving pixel:", error);
+    }
   };
 
   return (
