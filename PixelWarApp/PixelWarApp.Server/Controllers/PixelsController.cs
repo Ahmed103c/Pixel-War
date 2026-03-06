@@ -6,11 +6,11 @@ namespace PixelWarApp.Server.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class PixelController : Controller
+    public class PixelsController : Controller
     {
         private readonly PixelService _pixelService;
 
-        public PixelController(PixelService pixelService)
+        public PixelsController(PixelService pixelService)
         {
             _pixelService = pixelService;
         }

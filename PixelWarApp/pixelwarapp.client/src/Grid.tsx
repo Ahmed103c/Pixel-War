@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./Grid.css";
+import { getPixels } from "./services/pixelService";
 
 const COLS = 40;
 const ROWS = 20;
@@ -8,6 +9,19 @@ const ROWS = 20;
 const PALETTE = ["#ff0000", "#00ff00", "#0000ff", "#ffff00", "#000000", "#ffffff"];
 
 function Grid() {
+
+  useEffect(() => {
+    const fetchPixels = async () => {
+      try {
+        const pixels = await getPixels()
+        console.log("Pixels from backend:", pixels)
+      } catch (error) {
+        console.error("Error fetching pixels:", error)
+      }
+    }
+
+    fetchPixels()
+  }, [])
 
   const [pixelColors, setPixelColors] = useState<Record<string, string>>({});
   const [selectedColor, setSelectedColor] = useState<string>(PALETTE[0]);
