@@ -1,7 +1,7 @@
 # Key Pair
 resource "aws_key_pair" "pixelwar" {
   key_name   = "pixelwar-key"
-  public_key = file("~/.ssh/pixelwar.pub")
+  public_key = file("/home/legen/.ssh/pixelwar.pub")
 }
 
 # EC2 Master
