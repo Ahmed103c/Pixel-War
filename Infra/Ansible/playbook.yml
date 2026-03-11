@@ -1,0 +1,25 @@
+- name: Installer K3s sur le Master
+  hosts: master
+  become: true
+  tasks:
+    - name: Installer K3s
+      shell: curl -sfL https://get.k3s.io | sh -
+      args:
+        creates: /usr/local/bin/k3s
+
+    - name: Récupérer le token K3s
+      fetch:
+        src: /var/lib/rancher/k3s/server/node-token
+        dest: /tmp/k3s-token
+        flat: yes
+
+- name: Installer K3s sur le Worker
+  hosts: workers
+  become: true
+  tasks:
+    - name: Joindre le cluster
+      shell: |
+        curl -sfL https://get.k3s.io | K3S_URL=https://15.224.64.34:6443 \
+        K3S_TOKEN={{ lookup('file', '/tmp/k3s-token') }} sh -
+      args:
+        creates: /usr/local/bin/k3s
